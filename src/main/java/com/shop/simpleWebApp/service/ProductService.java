@@ -1,7 +1,9 @@
 package com.shop.simpleWebApp.service;
 
 import com.shop.simpleWebApp.model.Product;
+import com.shop.simpleWebApp.repository.ProductRepository;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,35 +14,31 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    List<Product> products = new ArrayList<>(Arrays.asList(
+    @Autowired
+    ProductRepository repository;
+
+    /*List<Product> products = new ArrayList<>(Arrays.asList(
             new Product(101, "Iphone", 50000),
             new Product(102, "Canon Camera", 70000),
-            new Product(103, "Macbook", 100000)));
+            new Product(103, "Macbook", 100000)));*/
+
+    public List<Product> getProducts() {
+        return repository.findAll();
+    }
 
     public Product getProductById(int id) {
-        return products.stream().
-                filter(p -> p.getId() == id).
-                findFirst().orElse(new Product(100, "No item", 0));
+        return repository.findById(id).orElse(new Product());
     }
 
     public void addProduct(Product product) {
-        products.add(product);
+        repository.save(product);
     }
 
     public void updateProduct(Product product) {
-        int index = 0;
-        for(int i = 0; i <products.size(); i++)
-            if(products.get(i).getId() == product.getId())
-                index = i;
-        products.set(index, product);
+        repository.save(product);
     }
 
     public void deleteProduct(int id) {
-        int index = 0;
-        for(int i = 0; i <products.size(); i++)
-            if(products.get(i).getId() == id)
-                index = i;
-
-        products.remove(index);
+        repository.deleteById(id);
     }
 }
